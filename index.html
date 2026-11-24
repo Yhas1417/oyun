@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>1000 KM/H Aşırı Hız</title>
+    <title>1000 Limit Oyun Merkezi</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,507 +13,104 @@
             padding: 0;
         }
         body {
-            background-color: #0d1117;
+            background: #0d1117;
             color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            touch-action: manipulation;
+            padding: 20px;
         }
-        #game-container {
-            position: relative;
+        .hub {
             width: 100%;
-            max-width: 500px;
-            height: 100vh;
-            background: linear-gradient(180deg, #161b22 0%, #0d1117 100%);
-            border-left: 2px solid #30363d;
-            border-right: 2px solid #30363d;
-            overflow: hidden;
-        }
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-        #hud {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            pointer-events: none;
-            z-index: 10;
-        }
-        .stat-box {
-            background: rgba(22, 27, 34, 0.85);
+            max-width: 460px;
+            background: #161b22;
             border: 1px solid #30363d;
-            padding: 10px 15px;
-            border-radius: 12px;
-            backdrop-filter: blur(4px);
+            border-radius: 22px;
+            padding: 26px 22px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
         }
-        #speed-display {
-            font-size: 28px;
-            font-weight: 900;
-            color: #58a6ff;
-            font-variant-numeric: tabular-nums;
+        h1 {
+            font-size: 26px;
+            text-align: center;
+            margin-bottom: 6px;
         }
-        #heat-bar-container {
-            width: 100%;
-            height: 8px;
-            background: #21262d;
-            border-radius: 4px;
-            margin-top: 6px;
-            overflow: hidden;
+        .subtitle {
+            color: #8b949e;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 22px;
         }
-        #heat-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #3fb950, #d29922, #f85149);
-            transition: width 0.05s linear;
-        }
-        #overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(13, 17, 23, 0.88);
+        .game-list {
             display: flex;
             flex-direction: column;
+            gap: 14px;
+        }
+        .game-card {
+            display: flex;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 30px;
-            pointer-events: auto;
-            z-index: 20;
+            gap: 16px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 18px;
+            text-decoration: none;
+            color: #ffffff;
+            transition: transform 0.12s, border-color 0.2s, background 0.2s;
         }
-        #overlay h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
+        .game-card:active {
+            transform: scale(0.98);
         }
-        #overlay p {
-            color: #8b949e;
-            font-size: 16px;
-            line-height: 1.5;
-            margin-bottom: 25px;
+        .game-card:hover {
+            border-color: #58a6ff;
+            background: #131c28;
         }
-        button {
-            background: #238636;
-            color: white;
-            border: none;
-            padding: 15px 35px;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(35, 134, 54, 0.4);
-            transition: transform 0.1s, background 0.2s;
-            touch-action: manipulation;
+        .emoji {
+            font-size: 42px;
+            flex-shrink: 0;
         }
-        button:active {
-            transform: scale(0.95);
+        .title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 4px;
         }
-        #controls-hint {
-            position: absolute;
-            bottom: 25px;
-            width: 100%;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.4);
+        .desc {
             font-size: 13px;
-            pointer-events: none;
+            color: #8b949e;
+            line-height: 1.4;
+        }
+        .arrow {
+            margin-left: auto;
+            font-size: 20px;
+            color: #58a6ff;
         }
     </style>
 </head>
 <body>
+    <div class="hub">
+        <h1>🎮 Oyun Seç</h1>
+        <p class="subtitle">Oynamak istediğin oyuna dokun</p>
 
-<div id="game-container">
-    <div id="hud">
-        <div class="stat-box" style="width: 65%;">
-            <div style="font-size: 12px; color: #8b949e;">HIZ LİMİTİ: 1000 KM/H</div>
-            <div id="speed-display">0 <span style="font-size: 14px;">km/h</span></div>
-            <div id="heat-bar-container">
-                <div id="heat-bar"></div>
-            </div>
+        <div class="game-list">
+            <a href="hiz.html" class="game-card">
+                <div class="emoji">🏎️</div>
+                <div>
+                    <div class="title">1000 KM/H Aşırı Hız</div>
+                    <div class="desc">Basılı tutarak hızlan, trafikten kaç ve 1000 km/h sınırında patla!</div>
+                </div>
+                <div class="arrow">➔</div>
+            </a>
+
+            <a href="yanardag.html" class="game-card">
+                <div class="emoji">🌋</div>
+                <div>
+                    <div class="title">Yanardağ 1000 Bar</div>
+                    <div class="desc">Seri dokun veya SPACE ile basıncı 1000 bar'a çıkar ve patlat!</div>
+                </div>
+                <div class="arrow">➔</div>
+            </a>
         </div>
-        <div class="stat-box" style="text-align: right;">
-            <div style="font-size: 12px; color: #8b949e;">DURUM</div>
-            <div id="status-emoji" style="font-size: 28px;">🏎️</div>
-        </div>
     </div>
-
-    <canvas id="gameCanvas"></canvas>
-
-    <div id="controls-hint">
-        GAZ: Ekrana Basılı Tut / Boşluk • YÖN: Sürükle veya Sağ/Sol Ok
-    </div>
-
-    <div id="overlay" style="pointer-events: auto;">
-        <div id="overlay-emoji" style="font-size: 64px; margin-bottom: 10px;">🚀</div>
-        <h1 id="overlay-title">1000 KM/H</h1>
-        <p id="overlay-desc">
-            Ekrana basılı tutarak hızlan! Hızlandıkça trafik sıklaşır ve aracın ısınır.<br><br>
-            ⚠️ <strong>1000 km/h</strong> sınırına ulaşırsan motor aşırı yüklenip <strong>PATLAR!</strong> 💥
-        </p>
-        <button id="start-btn" type="button" onclick="window.startOyunu(event)" onpointerdown="window.startOyunu(event)">GAZA BAS 🔥</button>
-    </div>
-</div>
-
-<script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const speedDisplay = document.getElementById('speed-display');
-    const heatBar = document.getElementById('heat-bar');
-    const statusEmoji = document.getElementById('status-emoji');
-    const overlay = document.getElementById('overlay');
-    const overlayTitle = document.getElementById('overlay-title');
-    const overlayDesc = document.getElementById('overlay-desc');
-    const overlayEmoji = document.getElementById('overlay-emoji');
-    const startBtn = document.getElementById('start-btn');
-
-    let width = 360;
-    let height = 640;
-
-    function resize() {
-        const parent = canvas.parentElement;
-        width = canvas.width = Math.max(200, parent.clientWidth || window.innerWidth || 360);
-        height = canvas.height = Math.max(300, parent.clientHeight || window.innerHeight || 640);
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    // Oyun Değişkenleri
-    let isPlaying = false;
-    let isAccelerating = false;
-    let speed = 0; // 0 - 1000
-    let playerX = width / 2;
-    let targetX = width / 2;
-    let obstacles = [];
-    let particles = [];
-    let roadOffset = 0;
-    let frameCount = 0;
-    let shakeIntensity = 0;
-    let animFrameId = null;
-    let lastStartTime = 0;
-
-    const obstacleEmojis = ['🚕', '🚙', '🚌', '🚚', '🚧', '🛢️', '🪨'];
-
-    // Kontroller (Dokunmatik & Fare & Klavye)
-    function startGas(e) {
-        if (!isPlaying) return;
-        isAccelerating = true;
-        updatePointer(e);
-    }
-
-    function stopGas() {
-        isAccelerating = false;
-    }
-
-    function updatePointer(e) {
-        if (!isPlaying || !isAccelerating) return;
-        const rect = canvas.getBoundingClientRect();
-        let clientX = (e && e.touches && e.touches[0]) ? e.touches[0].clientX : (e ? e.clientX : undefined);
-        if (clientX !== undefined) {
-            targetX = clientX - rect.left;
-        }
-    }
-
-    canvas.addEventListener('mousedown', startGas);
-    canvas.addEventListener('mousemove', updatePointer);
-    window.addEventListener('mouseup', stopGas);
-
-    canvas.addEventListener('touchstart', (e) => {
-        if (!isPlaying) return;
-        e.preventDefault();
-        startGas(e);
-    }, { passive: false });
-
-    canvas.addEventListener('touchmove', (e) => {
-        if (!isPlaying) return;
-        e.preventDefault();
-        updatePointer(e);
-    }, { passive: false });
-
-    window.addEventListener('touchend', stopGas);
-    window.addEventListener('touchcancel', stopGas);
-
-    // Klavye Desteği
-    const keys = {};
-    window.addEventListener('keydown', (e) => {
-        keys[e.code] = true;
-        if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
-            isAccelerating = true;
-        }
-    });
-    window.addEventListener('keyup', (e) => {
-        keys[e.code] = false;
-        if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
-            isAccelerating = false;
-        }
-    });
-
-    function resetGame(e) {
-        if (e) {
-            e.stopPropagation();
-        }
-        const now = Date.now();
-        if (now - lastStartTime < 250) return;
-        lastStartTime = now;
-
-        resize();
-        speed = 0;
-        playerX = width / 2;
-        targetX = width / 2;
-        obstacles = [];
-        particles = [];
-        shakeIntensity = 0;
-        isAccelerating = false;
-        isPlaying = true;
-        overlay.style.display = 'none';
-        overlay.style.pointerEvents = 'none';
-
-        if (animFrameId) {
-            cancelAnimationFrame(animFrameId);
-        }
-        animFrameId = requestAnimationFrame(gameLoop);
-    }
-
-    window.startOyunu = resetGame;
-    startBtn.addEventListener('click', resetGame);
-    startBtn.addEventListener('touchend', resetGame, { passive: true });
-
-    function createParticles(x, y, emojis, count, speedMult = 1) {
-        for (let i = 0; i < count; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const velocity = (Math.random() * 6 + 2) * speedMult;
-            particles.push({
-                x: x,
-                y: y,
-                vx: Math.cos(angle) * velocity,
-                vy: Math.sin(angle) * velocity,
-                emoji: emojis[Math.floor(Math.random() * emojis.length)],
-                size: Math.random() * 20 + 16,
-                life: 1.0
-            });
-        }
-    }
-
-    function endGame(reason) {
-        isPlaying = false;
-        isAccelerating = false;
-
-        if (reason === 'exploded') {
-            createParticles(playerX, height - 110, ['💥', '🔥', '💨', '⚡', '🔩'], 35, 1.8);
-            shakeIntensity = 25;
-            overlayEmoji.textContent = '💥';
-            overlayTitle.textContent = '1000 KM/H! PATLADIN!';
-            overlayTitle.style.color = '#f85149';
-            overlayDesc.innerHTML = 'Motor aşırı hıza dayanamadı ve infilak etti!<br>Maksimum sınıra ulaştın, efsanevi bir son!';
-        } else {
-            createParticles(playerX, height - 110, ['💥', '💢', '💨'], 15, 1);
-            shakeIntensity = 12;
-            overlayEmoji.textContent = '🚑';
-            overlayTitle.textContent = 'KAZA YAPTIN!';
-            overlayTitle.style.color = '#d29922';
-            overlayDesc.innerHTML = `Ulaşılan Maksimum Hız: <strong>${Math.floor(speed)} km/h</strong><br>Hızlandıkça reflekslerin daha da keskin olmalı!`;
-        }
-
-        setTimeout(() => {
-            startBtn.textContent = 'TEKRAR DENE 🔄';
-            overlay.style.pointerEvents = 'auto';
-            overlay.style.display = 'flex';
-        }, 600);
-    }
-
-    function update() {
-        frameCount++;
-
-        const moveSpeed = 7 + (speed / 150);
-        if (keys['ArrowLeft'] || keys['KeyA']) targetX -= moveSpeed;
-        if (keys['ArrowRight'] || keys['KeyD']) targetX += moveSpeed;
-
-        targetX = Math.max(35, Math.min(width - 35, targetX));
-        playerX += (targetX - playerX) * 0.2;
-
-        // Yavaş Hızlanma ve Dengeli Yavaşlama
-        if (isAccelerating) {
-            speed += 0.75 + (speed * 0.0012);
-        } else {
-            speed = Math.max(0, speed - 1.5);
-        }
-
-        if (speed >= 1000) {
-            speed = 1000;
-            updateHUD();
-            endGame('exploded');
-            return;
-        }
-
-        if (speed > 600) {
-            shakeIntensity = ((speed - 600) / 400) * 8;
-        } else {
-            shakeIntensity = Math.max(0, shakeIntensity - 0.5);
-        }
-
-        if (isAccelerating && frameCount % 3 === 0) {
-            const exhaustEmoji = speed > 800 ? '🔥' : (speed > 400 ? '⚡' : '💨');
-            particles.push({
-                x: playerX + (Math.random() * 14 - 7),
-                y: height - 85,
-                vx: (Math.random() - 0.5) * 1.5,
-                vy: Math.random() * 4 + 3,
-                emoji: exhaustEmoji,
-                size: speed > 700 ? 22 : 16,
-                life: 0.7
-            });
-        }
-
-        const spawnRate = Math.max(12, Math.floor(55 - (speed / 22)));
-        if (speed > 30 && frameCount % spawnRate === 0) {
-            const laneWidth = Math.max(40, width - 80);
-            const obsX = 40 + Math.random() * laneWidth;
-            const emoji = obstacleEmojis[Math.floor(Math.random() * obstacleEmojis.length)];
-            obstacles.push({
-                x: obsX,
-                y: -50,
-                emoji: emoji,
-                size: 36,
-                speedOffset: Math.random() * 2 + 1
-            });
-        }
-
-        const fallSpeed = 3 + (speed / 35);
-        for (let i = obstacles.length - 1; i >= 0; i--) {
-            let obs = obstacles[i];
-            obs.y += fallSpeed + obs.speedOffset;
-
-            const dx = Math.abs(playerX - obs.x);
-            const dy = Math.abs((height - 110) - obs.y);
-            if (dx < 26 && dy < 28) {
-                endGame('crashed');
-                return;
-            }
-
-            if (obs.y > height + 60) {
-                obstacles.splice(i, 1);
-            }
-        }
-
-        roadOffset = (roadOffset + fallSpeed * 1.5) % 80;
-
-        updateHUD();
-    }
-
-    function updateHUD() {
-        const currentSpeed = Math.floor(speed);
-        speedDisplay.innerHTML = `${currentSpeed} <span style="font-size: 14px;">km/h</span>`;
-        heatBar.style.width = `${(speed / 1000) * 100}%`;
-
-        if (speed < 250) {
-            speedDisplay.style.color = '#58a6ff';
-            statusEmoji.textContent = '🏎️';
-        } else if (speed < 550) {
-            speedDisplay.style.color = '#3fb950';
-            statusEmoji.textContent = '⚡';
-        } else if (speed < 850) {
-            speedDisplay.style.color = '#d29922';
-            statusEmoji.textContent = '🔥';
-        } else {
-            speedDisplay.style.color = '#f85149';
-            statusEmoji.textContent = '🥵';
-        }
-    }
-
-    function draw() {
-        ctx.save();
-
-        if (shakeIntensity > 0) {
-            const dx = (Math.random() - 0.5) * shakeIntensity;
-            const dy = (Math.random() - 0.5) * shakeIntensity;
-            ctx.translate(dx, dy);
-        }
-
-        ctx.clearRect(0, 0, width, height);
-
-        if (speed > 650) {
-            const redAlpha = ((speed - 650) / 350) * 0.25;
-            ctx.fillStyle = `rgba(248, 81, 73, ${redAlpha})`;
-            ctx.fillRect(0, 0, width, height);
-        }
-
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
-        ctx.lineWidth = 4;
-        ctx.setLineDash([40, 40]);
-        ctx.lineDashOffset = -roadOffset;
-
-        const lanes = 3;
-        for (let i = 1; i < lanes; i++) {
-            const x = (width / lanes) * i;
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, height);
-            ctx.stroke();
-        }
-        ctx.setLineDash([]);
-
-        if (speed > 400) {
-            ctx.strokeStyle = `rgba(255, 255, 255, ${(speed - 400) / 1500})`;
-            ctx.lineWidth = 2;
-            for (let i = 0; i < 6; i++) {
-                const lx = ((frameCount * 37 + i * 97) % width);
-                const ly = ((frameCount * (speed / 25) + i * 150) % height);
-                ctx.beginPath();
-                ctx.moveTo(lx, ly);
-                ctx.lineTo(lx, ly + 40 + (speed / 15));
-                ctx.stroke();
-            }
-        }
-
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        for (let obs of obstacles) {
-            ctx.font = `${obs.size}px Arial`;
-            ctx.fillText(obs.emoji, obs.x, obs.y);
-        }
-
-        if (isPlaying) {
-            ctx.font = '44px Arial';
-            const carJitter = speed > 800 ? (Math.random() - 0.5) * 4 : 0;
-            ctx.fillText('🏎️', playerX + carJitter, height - 110);
-        }
-
-        for (let i = particles.length - 1; i >= 0; i--) {
-            let p = particles[i];
-            p.x += p.vx;
-            p.y += p.vy;
-            p.life -= 0.03;
-
-            if (p.life <= 0) {
-                particles.splice(i, 1);
-                continue;
-            }
-
-            ctx.globalAlpha = Math.max(0, p.life);
-            ctx.font = `${p.size}px Arial`;
-            ctx.fillText(p.emoji, p.x, p.y);
-        }
-        ctx.globalAlpha = 1.0;
-
-        ctx.restore();
-    }
-
-    function gameLoop() {
-        if (isPlaying) {
-            update();
-        }
-        draw();
-        if (isPlaying || particles.length > 0) {
-            animFrameId = requestAnimationFrame(gameLoop);
-        }
-    }
-</script>
-
 </body>
 </html>
