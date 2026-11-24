@@ -101,7 +101,8 @@
             z-index: 3;
             line-height: 1;
         }
-        #volcano-btn:active {
+        #volcano-btn:active,
+        #volcano-btn.pressed {
             transform: scale(0.88);
         }
         #stage-status {
@@ -215,7 +216,7 @@
         <div class="hud-box">
             <div class="hud-label">Zorluk & Kayıp</div>
             <div id="difficulty-val" class="hud-val" style="font-size: 18px; color: #3fb950;">Sakin</div>
-            <div id="decay-val" class="hud-sub">-2.0 bar/sn</div>
+            <div id="decay-val" class="hud-sub">-3.5 bar/sn</div>
         </div>
     </div>
 
@@ -226,11 +227,11 @@
     <div id="stage">
         <button type="button" id="volcano-btn">🏔️</button>
         <div id="stage-status">Magma Odası Sakin</div>
-        <div id="stage-hint">Basıncı artırmak için hızlıca dokun veya basılı tut!</div>
+        <div id="stage-hint">Dokun veya SPACE tuşuna bas!</div>
     </div>
 
     <div style="font-size: 12px; color: #8b949e; text-align: center; line-height: 1.4;">
-        ⚠️ Bıraktığında basınç hızla düşer. Yüksek basınçta beliren ❄️/💧 soğutma çatlaklarına dokunarak kapat!
+        ⚠️ Dokunarak ya da <strong>SPACE</strong> tuşuyla basıncı artır. Yüksek basınçta beliren ❄️/💧 soğutma çatlaklarına dokunarak kapat!
     </div>
 </div>
 
@@ -239,14 +240,15 @@
         <div style="font-size: 72px; margin-bottom: 10px;">💥</div>
         <h2 style="font-size: 26px; color: #f85149; margin-bottom: 8px;">250.0 BAR! BÜYÜK PATLAMA!</h2>
         <p id="final-stats" style="color: #c9d1d9; font-size: 15px; line-height: 1.5;"></p>
-        <button type="button" id="restart-btn" class="btn">YENİDEN PATLAT 🌋</button>
+        <button type="button" id="restart-btn" class="btn">YENİDEN PATLAT (SPACE) 🌋</button>
     </div>
 </div>
 
 <script>
     const MAX_PRESSURE = 250.0; // bar
     let pressure = 0.0;
-    let isHolding = false;
+    let isPointerHolding = false;
+    let isSpaceHolding = false;
     let exploded = false;
     let startTime = Date.now();
     let totalTaps = 0;
@@ -264,6 +266,10 @@
     const overlay = document.getElementById('overlay');
     const finalStats = document.getElementById('final-stats');
     const restartBtn = document.getElementById('restart-btn');
+
+    function isHolding() {
+        return isPointerHolding || isSpaceHolding;
+    }
 
     function getStageConfig(p) {
         if (p < 50) {
@@ -380,7 +386,9 @@
 
     function triggerExplosion() {
         exploded = true;
-        isHolding = false;
+        isPointerHolding = false;
+        isSpaceHolding = false;
+        volcanoBtn.classList.remove('pressed');
         stage.classList.remove('shake-low', 'shake-high');
         stage.querySelectorAll('.vent-hazard').forEach(el => el.remove());
 
@@ -395,22 +403,70 @@
         }
 
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-        finalStats.innerHTML = `Yanardağ <strong>250.0 bar</strong> basınca dayanamadı ve infilak etti!<br><br>⏱️ Süre: <strong>${elapsed} sn</strong> • 👆 Dokunuş: <strong>${totalTaps}</strong>`;
+        finalStats.innerHTML = `Yanardağ <strong>250.0 bar</strong> basınca dayanamadı ve infilak etti!<br><br>⏱️ Süre: <strong>${elapsed} sn</strong> • 👆 Vuruş: <strong>${totalTaps}</strong>`;
 
         setTimeout(() => {
             overlay.classList.add('active');
         }, 550);
     }
 
+    function resetGame() {
+        pressure = 0.0;
+        isPointerHolding = false;
+        isSpaceHolding = false;
+        exploded = false;
+        totalTaps = 0;
+        hazardTimer = 0;
+        startTime = Date.now();
+        volcanoBtn.classList.remove('pressed');
+        stage.querySelectorAll('.vent-hazard').forEach(el => el.remove());
+        overlay.classList.remove('active');
+    }
+
+    // Fare / Dokunmatik Kontrolleri
     volcanoBtn.addEventListener('pointerdown', (e) => {
         if (exploded) return;
-        isHolding = true;
+        isPointerHolding = true;
+        volcanoBtn.classList.add('pressed');
         totalTaps += 1;
         boostPressure(4.2, e.clientX, e.clientY);
     });
 
-    window.addEventListener('pointerup', () => { isHolding = false; });
-    window.addEventListener('pointercancel', () => { isHolding = false; });
+    window.addEventListener('pointerup', () => {
+        isPointerHolding = false;
+        if (!isSpaceHolding) volcanoBtn.classList.remove('pressed');
+    });
+    window.addEventListener('pointercancel', () => {
+        isPointerHolding = false;
+        if (!isSpaceHolding) volcanoBtn.classList.remove('pressed');
+    });
+
+    // Space (Boşluk) Tuşu Desteği
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+            e.preventDefault();
+            if (exploded) {
+                if (overlay.classList.contains('active') && !e.repeat) {
+                    resetGame();
+                }
+                return;
+            }
+            if (!e.repeat) {
+                isSpaceHolding = true;
+                volcanoBtn.classList.add('pressed');
+                totalTaps += 1;
+                boostPressure(4.2);
+            }
+        }
+    });
+
+    window.addEventListener('keyup', (e) => {
+        if (e.code === 'Space') {
+            e.preventDefault();
+            isSpaceHolding = false;
+            if (!isPointerHolding) volcanoBtn.classList.remove('pressed');
+        }
+    });
 
     function loop(now) {
         const dt = Math.min(0.1, (now - lastFrame) / 1000);
@@ -419,9 +475,9 @@
         if (!exploded) {
             const cfg = getStageConfig(pressure);
             const activeHazards = stage.querySelectorAll('.vent-hazard').length;
+            const holding = isHolding();
 
-            // Basılı tutarken sürekli basınç artışı, bırakıldığında hızlı basınç kaybı
-            if (isHolding) {
+            if (holding) {
                 pressure += (15.0 * cfg.gainMult) * dt;
                 if (Math.random() < 0.25) {
                     const rect = stage.getBoundingClientRect();
@@ -433,7 +489,6 @@
                 pressure = Math.max(0, pressure - totalDecay * dt);
             }
 
-            // Aktif soğutma çatlakları basılı tutarken bile basıncı emer
             if (activeHazards > 0) {
                 pressure = Math.max(0, pressure - (activeHazards * 5.5) * dt);
             }
@@ -443,7 +498,6 @@
                 triggerExplosion();
             }
 
-            // Zorluk arttıkça soğutma çatlakları çıkar
             if (cfg.hazardInterval < 100) {
                 hazardTimer += dt;
                 if (hazardTimer >= cfg.hazardInterval) {
@@ -452,7 +506,6 @@
                 }
             }
 
-            // Arayüz & Emoji Güncelleme
             const ratio = pressure / MAX_PRESSURE;
             pressureVal.textContent = `${pressure.toFixed(1)} bar`;
             pressureVal.style.color = cfg.color;
@@ -462,11 +515,12 @@
             pressureBar.style.width = `${ratio * 100}%`;
 
             volcanoBtn.textContent = cfg.emoji;
-            volcanoBtn.style.transform = `scale(${(1 + ratio * 0.42).toFixed(2)})`;
+            const pressScale = holding ? 0.92 : 1.0;
+            volcanoBtn.style.transform = `scale(${((1 + ratio * 0.42) * pressScale).toFixed(2)})`;
             stageStatus.textContent = cfg.status;
-            stageHint.textContent = isHolding
+            stageHint.textContent = holding
                 ? 'Basınç yükseliyor! Bırakırsan düşer!'
-                : 'Bıraktın! Basınç hızla düşüyor...';
+                : 'Dokun veya SPACE ile basıncı artır!';
 
             stage.classList.remove('shake-low', 'shake-high');
             if (pressure >= 185) {
@@ -479,16 +533,7 @@
         requestAnimationFrame(loop);
     }
 
-    restartBtn.addEventListener('click', () => {
-        pressure = 0.0;
-        isHolding = false;
-        exploded = false;
-        totalTaps = 0;
-        hazardTimer = 0;
-        startTime = Date.now();
-        stage.querySelectorAll('.vent-hazard').forEach(el => el.remove());
-        overlay.classList.remove('active');
-    });
+    restartBtn.addEventListener('click', resetGame);
 
     requestAnimationFrame(loop);
 </script>
