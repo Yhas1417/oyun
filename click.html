@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Seçimli Tıklama Oyunu</title>
+    <title>Yanardağ Basınç Patlaması</title>
     <style>
         * {
             box-sizing: border-box;
@@ -22,6 +22,7 @@
             justify-content: center;
             padding: 16px;
             touch-action: manipulation;
+            overflow: hidden;
         }
         #app {
             width: 100%;
@@ -29,127 +30,58 @@
             background: #161b22;
             border: 1px solid #30363d;
             border-radius: 20px;
-            padding: 22px;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
-        }
-        .screen {
-            display: none;
-        }
-        .screen.active {
-            display: block;
-        }
-        h1 {
-            font-size: 26px;
-            margin-bottom: 6px;
-            text-align: center;
-        }
-        .subtitle {
-            color: #8b949e;
-            font-size: 14px;
-            text-align: center;
-            margin-bottom: 18px;
-        }
-        .mode-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin-bottom: 18px;
-        }
-        .mode-card {
-            background: #0d1117;
-            border: 2px solid #30363d;
-            border-radius: 14px;
-            padding: 14px 16px;
-            text-align: left;
-            color: #ffffff;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            transition: transform 0.12s, border-color 0.2s, background 0.2s;
-            touch-action: manipulation;
-        }
-        .mode-card:active {
-            transform: scale(0.98);
-        }
-        .mode-card.selected {
-            border-color: #58a6ff;
-            background: #132033;
-        }
-        .mode-emoji {
-            font-size: 32px;
-            flex-shrink: 0;
-        }
-        .mode-title {
-            font-size: 17px;
-            font-weight: 700;
-            margin-bottom: 2px;
-        }
-        .mode-desc {
-            font-size: 13px;
-            color: #8b949e;
-        }
-        .btn {
-            width: 100%;
-            background: #238636;
-            color: #ffffff;
-            border: none;
-            border-radius: 12px;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
-            touch-action: manipulation;
-        }
-        .btn:active {
-            transform: scale(0.97);
-        }
-        .btn-secondary {
-            background: #21262d;
-            border: 1px solid #30363d;
-            margin-top: 10px;
-            font-size: 15px;
-            padding: 12px;
+            padding: 20px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
         }
         .hud {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .hud-box {
             background: #0d1117;
             border: 1px solid #30363d;
             border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 14px;
+            padding: 10px 14px;
         }
         .hud-label {
             font-size: 11px;
             color: #8b949e;
             text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
         .hud-val {
-            font-size: 20px;
-            font-weight: 800;
+            font-size: 24px;
+            font-weight: 900;
             color: #58a6ff;
+            font-variant-numeric: tabular-nums;
+            margin-top: 2px;
         }
-        .progress-wrap {
+        .hud-sub {
+            font-size: 12px;
+            color: #8b949e;
+            margin-top: 2px;
+        }
+        .bar-wrap {
             width: 100%;
-            height: 10px;
+            height: 12px;
             background: #21262d;
             border-radius: 999px;
             overflow: hidden;
-            margin-bottom: 18px;
+            margin-bottom: 14px;
+            border: 1px solid #30363d;
         }
-        .progress-bar {
+        .bar-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #3fb950, #d29922, #f85149);
-            transition: width 0.08s linear;
+            background: linear-gradient(90deg, #3fb950 0%, #d29922 50%, #f85149 85%, #ff2a2a 100%);
+            transition: width 0.05s linear;
         }
-        .click-stage {
+        #stage {
             position: relative;
-            height: 250px;
-            background: #0d1117;
+            height: 310px;
+            background: radial-gradient(circle at 50% 65%, #1f1715 0%, #0d1117 75%);
             border: 1px solid #30363d;
             border-radius: 16px;
             display: flex;
@@ -159,304 +91,406 @@
             overflow: hidden;
             margin-bottom: 14px;
         }
-        #target-btn {
-            font-size: 76px;
+        #volcano-btn {
+            font-size: 86px;
             background: transparent;
             border: none;
             cursor: pointer;
-            transition: transform 0.07s ease;
+            transition: transform 0.06s ease;
             touch-action: manipulation;
-            z-index: 2;
+            z-index: 3;
+            line-height: 1;
         }
-        #target-btn:active {
-            transform: scale(0.84);
+        #volcano-btn:active {
+            transform: scale(0.88);
         }
-        .stage-hint {
-            margin-top: 10px;
-            font-size: 13px;
+        #stage-status {
+            margin-top: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #c9d1d9;
+            z-index: 3;
+            text-align: center;
+            padding: 0 12px;
+        }
+        #stage-hint {
+            margin-top: 4px;
+            font-size: 12px;
             color: #8b949e;
-            z-index: 2;
+            z-index: 3;
         }
-        .floating-emoji {
+        .vent-hazard {
+            position: absolute;
+            font-size: 26px;
+            cursor: pointer;
+            z-index: 4;
+            background: rgba(13, 17, 23, 0.85);
+            border: 1px solid #58a6ff;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: popIn 0.2s ease-out;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.3); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .float-emoji {
             position: absolute;
             font-size: 24px;
             pointer-events: none;
             animation: floatUp 0.75s ease-out forwards;
-            z-index: 3;
+            z-index: 2;
         }
         @keyframes floatUp {
             0% {
                 opacity: 1;
-                transform: translate(-50%, -50%) scale(0.9);
+                transform: translate(-50%, -50%) scale(0.85);
             }
             100% {
                 opacity: 0;
-                transform: translate(calc(-50% + var(--dx)), calc(-50% - 75px)) scale(1.35);
+                transform: translate(calc(-50% + var(--dx)), calc(-50% - 85px)) scale(1.35);
             }
         }
-        .shake {
-            animation: shakeAnim 0.22s infinite;
+        .shake-low { animation: shakeLow 0.2s infinite; }
+        .shake-high { animation: shakeHigh 0.12s infinite; }
+        @keyframes shakeLow {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-2px, 2px); }
         }
-        @keyframes shakeAnim {
+        @keyframes shakeHigh {
             0% { transform: translate(0, 0); }
-            25% { transform: translate(-4px, 2px); }
-            50% { transform: translate(4px, -2px); }
-            75% { transform: translate(-3px, -2px); }
+            25% { transform: translate(-5px, 3px); }
+            50% { transform: translate(5px, -3px); }
+            75% { transform: translate(-4px, -3px); }
             100% { transform: translate(0, 0); }
         }
-        .result-box {
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 17, 23, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 20;
+        }
+        #overlay.active {
+            display: flex;
+        }
+        .modal {
+            width: 100%;
+            max-width: 400px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 20px;
+            padding: 24px;
             text-align: center;
-            padding: 12px 0 18px;
         }
-        .result-emoji {
-            font-size: 68px;
-            margin-bottom: 10px;
-        }
-        .result-title {
-            font-size: 26px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-        .result-text {
-            font-size: 15px;
-            color: #8b949e;
-            line-height: 1.5;
+        .btn {
+            width: 100%;
+            background: #238636;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 16px;
         }
     </style>
 </head>
 <body>
 <div id="app">
-    <!-- 1. SEÇİM EKRANI -->
-    <div id="select-screen" class="screen active">
-        <h1>🎯 Ne Olsun?</h1>
-        <p class="subtitle">Tıkladıkça ne gerçekleşeceğini seç ve hedefe ulaş!</p>
-
-        <div class="mode-grid">
-            <button type="button" class="mode-card selected" data-mode="volcano">
-                <span class="mode-emoji">🌋</span>
-                <div>
-                    <div class="mode-title">Yanardağ Patlaması</div>
-                    <div class="mode-desc">Tıkladıkça basınç artar, zirvede lav ve taşlar patlar! 🪨🔥</div>
-                </div>
-            </button>
-
-            <button type="button" class="mode-card" data-mode="rocket">
-                <span class="mode-emoji">🚀</span>
-                <div>
-                    <div class="mode-title">Roket Fırlatma</div>
-                    <div class="mode-desc">Motoru ateşle, irtifa kazan ve uzayda yıldızlara ulaş! 🌟✨</div>
-                </div>
-            </button>
-
-            <button type="button" class="mode-card" data-mode="party">
-                <span class="mode-emoji">🎁</span>
-                <div>
-                    <div class="mode-title">Sürpriz Hediye Kutusu</div>
-                    <div class="mode-desc">Kilidi aç, kutuyu şişir ve konfeti patlaması yaşa! 🎉🥳</div>
-                </div>
-            </button>
+    <div class="hud">
+        <div class="hud-box">
+            <div class="hud-label">Magma Basıncı</div>
+            <div id="pressure-val" class="hud-val">0.0 bar</div>
+            <div class="hud-sub">Patlama Eşiği: 250.0 bar</div>
         </div>
-
-        <button type="button" id="start-btn" class="btn">SEÇİMLE BAŞLA ▶️</button>
+        <div class="hud-box">
+            <div class="hud-label">Zorluk & Kayıp</div>
+            <div id="difficulty-val" class="hud-val" style="font-size: 18px; color: #3fb950;">Sakin</div>
+            <div id="decay-val" class="hud-sub">-2.0 bar/sn</div>
+        </div>
     </div>
 
-    <!-- 2. OYUN EKRANI -->
-    <div id="game-screen" class="screen">
-        <div class="hud">
-            <div>
-                <div class="hud-label">Senaryo</div>
-                <div id="hud-mode" class="hud-val" style="font-size: 16px;">🌋 Yanardağ</div>
-            </div>
-            <div style="text-align: center;">
-                <div class="hud-label">Tıklama</div>
-                <div id="hud-clicks" class="hud-val">0</div>
-            </div>
-            <div style="text-align: right;">
-                <div class="hud-label">Hedef</div>
-                <div id="hud-goal" class="hud-val">50</div>
-            </div>
-        </div>
-
-        <div class="progress-wrap">
-            <div id="progress-bar" class="progress-bar"></div>
-        </div>
-
-        <div id="click-stage" class="click-stage">
-            <button type="button" id="target-btn">🌋</button>
-            <div id="stage-hint" class="stage-hint">Hızlıca dokun!</div>
-        </div>
-
-        <button type="button" id="change-mode-btn" class="btn btn-secondary">🔄 Senaryoyu Değiştir</button>
+    <div class="bar-wrap">
+        <div id="pressure-bar" class="bar-fill"></div>
     </div>
 
-    <!-- 3. FİNAL EKRANI -->
-    <div id="result-screen" class="screen">
-        <div class="result-box">
-            <div id="result-emoji" class="result-emoji">💥</div>
-            <div id="result-title" class="result-title">PATLADI!</div>
-            <p id="result-text" class="result-text"></p>
-        </div>
-        <button type="button" id="replay-btn" class="btn">TEKRAR OYNA 🔁</button>
-        <button type="button" id="back-menu-btn" class="btn btn-secondary">🎯 Başka Senaryo Seç</button>
+    <div id="stage">
+        <button type="button" id="volcano-btn">🏔️</button>
+        <div id="stage-status">Magma Odası Sakin</div>
+        <div id="stage-hint">Basıncı artırmak için hızlıca dokun veya basılı tut!</div>
+    </div>
+
+    <div style="font-size: 12px; color: #8b949e; text-align: center; line-height: 1.4;">
+        ⚠️ Bıraktığında basınç hızla düşer. Yüksek basınçta beliren ❄️/💧 soğutma çatlaklarına dokunarak kapat!
+    </div>
+</div>
+
+<div id="overlay">
+    <div class="modal">
+        <div style="font-size: 72px; margin-bottom: 10px;">💥</div>
+        <h2 style="font-size: 26px; color: #f85149; margin-bottom: 8px;">250.0 BAR! BÜYÜK PATLAMA!</h2>
+        <p id="final-stats" style="color: #c9d1d9; font-size: 15px; line-height: 1.5;"></p>
+        <button type="button" id="restart-btn" class="btn">YENİDEN PATLAT 🌋</button>
     </div>
 </div>
 
 <script>
-    const MODES = {
-        volcano: {
-            name: '🌋 Yanardağ',
-            goal: 50,
-            baseEmoji: '🌋',
-            midEmojis: ['♨️', '🔥', '🪨', '🌋'],
-            burstEmojis: ['💥', '🔥', '🌋', '🪨', '⚡'],
-            hint: 'Basıncı artır! 50 tıklamada patlayacak...',
-            finalEmoji: '💥',
-            finalTitle: 'YANARDAĞ PATLADI!',
-            finalText: 'Basınç zirveye çıktı ve lavlar gökyüzüne fırladı! 🌋🔥🪨'
-        },
-        rocket: {
-            name: '🚀 Roket',
-            goal: 60,
-            baseEmoji: '🚀',
-            midEmojis: ['💨', '🔥', '✨', '🚀'],
-            burstEmojis: ['🚀', '🌟', '✨', '🛸', '🌍'],
-            hint: 'İtkiyi artır! 60 tıklamada yörüngeye çıkacak...',
-            finalEmoji: '🌟',
-            finalTitle: 'UZAYA FIRLATILDI!',
-            finalText: 'Atmosferi aştın ve yıldızların arasına ulaştın! 🚀✨🌍'
-        },
-        party: {
-            name: '🎁 Hediye',
-            goal: 40,
-            baseEmoji: '🎁',
-            midEmojis: ['🎀', '✨', '🎈', '🎁'],
-            burstEmojis: ['🎉', '🎊', '🥳', '🎁', '🎈'],
-            hint: 'Kutuyu şişir! 40 tıklamada sürpriz patlayacak...',
-            finalEmoji: '🎉',
-            finalTitle: 'SÜRPRİZ PATLADI!',
-            finalText: 'Hediye kutusu açıldı ve ortalık konfeti doldu! 🎉🎊🥳'
-        }
-    };
+    const MAX_PRESSURE = 250.0; // bar
+    let pressure = 0.0;
+    let isHolding = false;
+    let exploded = false;
+    let startTime = Date.now();
+    let totalTaps = 0;
+    let lastFrame = performance.now();
+    let hazardTimer = 0;
 
-    let selectedModeKey = 'volcano';
-    let clicks = 0;
-    let finished = false;
-
-    const selectScreen = document.getElementById('select-screen');
-    const gameScreen = document.getElementById('game-screen');
-    const resultScreen = document.getElementById('result-screen');
-
-    const modeCards = document.querySelectorAll('.mode-card');
-    const startBtn = document.getElementById('start-btn');
-    const targetBtn = document.getElementById('target-btn');
-    const clickStage = document.getElementById('click-stage');
-    const hudMode = document.getElementById('hud-mode');
-    const hudClicks = document.getElementById('hud-clicks');
-    const hudGoal = document.getElementById('hud-goal');
-    const progressBar = document.getElementById('progress-bar');
+    const pressureVal = document.getElementById('pressure-val');
+    const difficultyVal = document.getElementById('difficulty-val');
+    const decayVal = document.getElementById('decay-val');
+    const pressureBar = document.getElementById('pressure-bar');
+    const stage = document.getElementById('stage');
+    const volcanoBtn = document.getElementById('volcano-btn');
+    const stageStatus = document.getElementById('stage-status');
     const stageHint = document.getElementById('stage-hint');
+    const overlay = document.getElementById('overlay');
+    const finalStats = document.getElementById('final-stats');
+    const restartBtn = document.getElementById('restart-btn');
 
-    const resultEmoji = document.getElementById('result-emoji');
-    const resultTitle = document.getElementById('result-title');
-    const resultText = document.getElementById('result-text');
-    const replayBtn = document.getElementById('replay-btn');
-    const backMenuBtn = document.getElementById('back-menu-btn');
-    const changeModeBtn = document.getElementById('change-mode-btn');
-
-    function showScreen(screenEl) {
-        [selectScreen, gameScreen, resultScreen].forEach(s => s.classList.remove('active'));
-        screenEl.classList.add('active');
+    function getStageConfig(p) {
+        if (p < 50) {
+            return {
+                emoji: '🏔️',
+                label: 'Sakin',
+                color: '#3fb950',
+                status: 'Yeraltı Isınıyor',
+                particles: ['💨', '🪨', '🌫️'],
+                gainMult: 1.0,
+                baseDecay: 3.5,
+                hazardInterval: 999
+            };
+        } else if (p < 110) {
+            return {
+                emoji: '🌋',
+                label: 'Aktif',
+                color: '#58a6ff',
+                status: 'Duman & Kül Çıkışı',
+                particles: ['💨', '♨️', '🪨'],
+                gainMult: 0.85,
+                baseDecay: 7.5,
+                hazardInterval: 3.6
+            };
+        } else if (p < 175) {
+            return {
+                emoji: '🌋',
+                label: 'Tehlikeli',
+                color: '#d29922',
+                status: 'Magma Yükseliyor!',
+                particles: ['🔥', '♨️', '🪨', '💨'],
+                gainMult: 0.68,
+                baseDecay: 13.0,
+                hazardInterval: 2.5
+            };
+        } else if (p < 220) {
+            return {
+                emoji: '🔥',
+                label: 'Kritik',
+                color: '#f85149',
+                status: 'Krater Çatlıyor!',
+                particles: ['🔥', '🌋', '⚡', '🪨'],
+                gainMult: 0.54,
+                baseDecay: 19.5,
+                hazardInterval: 1.8
+            };
+        } else {
+            return {
+                emoji: '🧨',
+                label: 'Aşırı Yük!',
+                color: '#ff2a2a',
+                status: 'PATLAMAYA RAMAK KALDI!',
+                particles: ['💥', '🔥', '⚡', '🌋'],
+                gainMult: 0.44,
+                baseDecay: 26.0,
+                hazardInterval: 1.3
+            };
+        }
     }
 
-    modeCards.forEach(card => {
-        card.addEventListener('click', () => {
-            modeCards.forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
-            selectedModeKey = card.dataset.mode;
-        });
-    });
-
-    function spawnFloatingEmoji(emoji, x, y, dx = (Math.random() - 0.5) * 90) {
+    function spawnFloat(emoji, x, y, dx = (Math.random() - 0.5) * 110) {
         const el = document.createElement('span');
-        el.className = 'floating-emoji';
+        el.className = 'float-emoji';
         el.textContent = emoji;
         el.style.left = `${x}px`;
         el.style.top = `${y}px`;
         el.style.setProperty('--dx', `${dx}px`);
-        clickStage.appendChild(el);
+        stage.appendChild(el);
         setTimeout(() => el.remove(), 750);
     }
 
-    function startGame() {
-        const mode = MODES[selectedModeKey];
-        clicks = 0;
-        finished = false;
+    function spawnCoolingHazard() {
+        if (stage.querySelectorAll('.vent-hazard').length >= 3) return;
+        const hz = document.createElement('button');
+        hz.type = 'button';
+        hz.className = 'vent-hazard';
+        hz.textContent = Math.random() > 0.5 ? '❄️' : '💧';
 
-        hudMode.textContent = mode.name;
-        hudClicks.textContent = '0';
-        hudGoal.textContent = String(mode.goal);
-        progressBar.style.width = '0%';
-        targetBtn.textContent = mode.baseEmoji;
-        targetBtn.style.transform = 'scale(1)';
-        stageHint.textContent = mode.hint;
-        clickStage.classList.remove('shake');
+        const rect = stage.getBoundingClientRect();
+        const x = 28 + Math.random() * Math.max(60, rect.width - 56);
+        const y = 28 + Math.random() * Math.max(60, rect.height - 90);
+        hz.style.left = `${x}px`;
+        hz.style.top = `${y}px`;
 
-        showScreen(gameScreen);
+        const closeHazard = (e) => {
+            e.stopPropagation();
+            spawnFloat('💨', x + 20, y + 20, 0);
+            hz.remove();
+        };
+        hz.addEventListener('click', closeHazard);
+        hz.addEventListener('touchstart', (e) => { e.preventDefault(); closeHazard(e); }, { passive: false });
+
+        stage.appendChild(hz);
+        setTimeout(() => {
+            if (hz.parentNode) hz.remove();
+        }, 4000);
     }
 
-    function handleTap(e) {
-        if (finished) return;
-        const mode = MODES[selectedModeKey];
-        clicks += 1;
+    function boostPressure(amount, clientX, clientY) {
+        if (exploded) return;
+        const cfg = getStageConfig(pressure);
+        pressure = Math.min(MAX_PRESSURE, pressure + amount * cfg.gainMult);
 
-        const ratio = Math.min(1, clicks / mode.goal);
-        hudClicks.textContent = String(clicks);
-        progressBar.style.width = `${ratio * 100}%`;
+        const rect = stage.getBoundingClientRect();
+        const fx = clientX ? clientX - rect.left : rect.width / 2;
+        const fy = clientY ? clientY - rect.top : rect.height / 2;
+        const pEmoji = cfg.particles[Math.floor(Math.random() * cfg.particles.length)];
+        spawnFloat(pEmoji, fx, fy);
 
-        // Hedefe yaklaştıkça ölçek büyür ve sarsıntı başlar
-        const scale = 1 + ratio * 0.45;
-        targetBtn.style.transform = `scale(${scale.toFixed(2)})`;
-        if (ratio >= 0.7) {
-            clickStage.classList.add('shake');
+        if (pressure >= MAX_PRESSURE) {
+            triggerExplosion();
+        }
+    }
+
+    function triggerExplosion() {
+        exploded = true;
+        isHolding = false;
+        stage.classList.remove('shake-low', 'shake-high');
+        stage.querySelectorAll('.vent-hazard').forEach(el => el.remove());
+
+        const rect = stage.getBoundingClientRect();
+        const boomEmojis = ['💥', '🔥', '🌋', '🪨', '⚡', '💨'];
+        for (let i = 0; i < 26; i++) {
+            const em = boomEmojis[i % boomEmojis.length];
+            const bx = rect.width / 2 + (Math.random() - 0.5) * 100;
+            const by = rect.height / 2 + (Math.random() - 0.5) * 80;
+            const dx = (Math.random() - 0.5) * 260;
+            spawnFloat(em, bx, by, dx);
         }
 
-        const rect = clickStage.getBoundingClientRect();
-        let clientX = rect.width / 2;
-        let clientY = rect.height / 2;
-        if (e && e.clientX && e.clientY) {
-            clientX = e.clientX - rect.left;
-            clientY = e.clientY - rect.top;
-        }
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        finalStats.innerHTML = `Yanardağ <strong>250.0 bar</strong> basınca dayanamadı ve infilak etti!<br><br>⏱️ Süre: <strong>${elapsed} sn</strong> • 👆 Dokunuş: <strong>${totalTaps}</strong>`;
 
-        const popEmoji = mode.midEmojis[Math.floor(Math.random() * mode.midEmojis.length)];
-        spawnFloatingEmoji(popEmoji, clientX, clientY);
+        setTimeout(() => {
+            overlay.classList.add('active');
+        }, 550);
+    }
 
-        if (clicks >= mode.goal) {
-            finished = true;
-            clickStage.classList.remove('shake');
+    volcanoBtn.addEventListener('pointerdown', (e) => {
+        if (exploded) return;
+        isHolding = true;
+        totalTaps += 1;
+        boostPressure(4.2, e.clientX, e.clientY);
+    });
 
-            for (let i = 0; i < 18; i++) {
-                const burstEmoji = mode.burstEmojis[i % mode.burstEmojis.length];
-                const bx = rect.width / 2 + (Math.random() - 0.5) * 120;
-                const by = rect.height / 2 + (Math.random() - 0.5) * 90;
-                const dx = (Math.random() - 0.5) * 220;
-                spawnFloatingEmoji(burstEmoji, bx, by, dx);
+    window.addEventListener('pointerup', () => { isHolding = false; });
+    window.addEventListener('pointercancel', () => { isHolding = false; });
+
+    function loop(now) {
+        const dt = Math.min(0.1, (now - lastFrame) / 1000);
+        lastFrame = now;
+
+        if (!exploded) {
+            const cfg = getStageConfig(pressure);
+            const activeHazards = stage.querySelectorAll('.vent-hazard').length;
+
+            // Basılı tutarken sürekli basınç artışı, bırakıldığında hızlı basınç kaybı
+            if (isHolding) {
+                pressure += (15.0 * cfg.gainMult) * dt;
+                if (Math.random() < 0.25) {
+                    const rect = stage.getBoundingClientRect();
+                    const em = cfg.particles[Math.floor(Math.random() * cfg.particles.length)];
+                    spawnFloat(em, rect.width / 2, rect.height / 2 - 10);
+                }
+            } else {
+                const totalDecay = cfg.baseDecay + activeHazards * 6.5;
+                pressure = Math.max(0, pressure - totalDecay * dt);
             }
 
-            setTimeout(() => {
-                resultEmoji.textContent = mode.finalEmoji;
-                resultTitle.textContent = mode.finalTitle;
-                resultText.textContent = mode.finalText;
-                showScreen(resultScreen);
-            }, 450);
+            // Aktif soğutma çatlakları basılı tutarken bile basıncı emer
+            if (activeHazards > 0) {
+                pressure = Math.max(0, pressure - (activeHazards * 5.5) * dt);
+            }
+
+            if (pressure >= MAX_PRESSURE) {
+                pressure = MAX_PRESSURE;
+                triggerExplosion();
+            }
+
+            // Zorluk arttıkça soğutma çatlakları çıkar
+            if (cfg.hazardInterval < 100) {
+                hazardTimer += dt;
+                if (hazardTimer >= cfg.hazardInterval) {
+                    hazardTimer = 0;
+                    spawnCoolingHazard();
+                }
+            }
+
+            // Arayüz & Emoji Güncelleme
+            const ratio = pressure / MAX_PRESSURE;
+            pressureVal.textContent = `${pressure.toFixed(1)} bar`;
+            pressureVal.style.color = cfg.color;
+            difficultyVal.textContent = cfg.label;
+            difficultyVal.style.color = cfg.color;
+            decayVal.textContent = `-${(cfg.baseDecay + activeHazards * 6.5).toFixed(1)} bar/sn`;
+            pressureBar.style.width = `${ratio * 100}%`;
+
+            volcanoBtn.textContent = cfg.emoji;
+            volcanoBtn.style.transform = `scale(${(1 + ratio * 0.42).toFixed(2)})`;
+            stageStatus.textContent = cfg.status;
+            stageHint.textContent = isHolding
+                ? 'Basınç yükseliyor! Bırakırsan düşer!'
+                : 'Bıraktın! Basınç hızla düşüyor...';
+
+            stage.classList.remove('shake-low', 'shake-high');
+            if (pressure >= 185) {
+                stage.classList.add('shake-high');
+            } else if (pressure >= 110) {
+                stage.classList.add('shake-low');
+            }
         }
+
+        requestAnimationFrame(loop);
     }
 
-    startBtn.addEventListener('click', startGame);
-    targetBtn.addEventListener('click', handleTap);
-    replayBtn.addEventListener('click', startGame);
-    changeModeBtn.addEventListener('click', () => showScreen(selectScreen));
-    backMenuBtn.addEventListener('click', () => showScreen(selectScreen));
+    restartBtn.addEventListener('click', () => {
+        pressure = 0.0;
+        isHolding = false;
+        exploded = false;
+        totalTaps = 0;
+        hazardTimer = 0;
+        startTime = Date.now();
+        stage.querySelectorAll('.vent-hazard').forEach(el => el.remove());
+        overlay.classList.remove('active');
+    });
+
+    requestAnimationFrame(loop);
 </script>
 </body>
 </html>
