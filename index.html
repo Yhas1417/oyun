@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>1000 KM/H Aşırı Hız</title>
+    <title>Yanardağ Basınç Patlaması</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,507 +13,484 @@
             padding: 0;
         }
         body {
-            background-color: #0d1117;
+            background: #0d1117;
             color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            padding: 16px;
             touch-action: manipulation;
-        }
-        #game-container {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            height: 100vh;
-            background: linear-gradient(180deg, #161b22 0%, #0d1117 100%);
-            border-left: 2px solid #30363d;
-            border-right: 2px solid #30363d;
             overflow: hidden;
         }
-        canvas {
-            display: block;
+        #app {
             width: 100%;
-            height: 100%;
-        }
-        #hud {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            pointer-events: none;
-            z-index: 10;
-        }
-        .stat-box {
-            background: rgba(22, 27, 34, 0.85);
+            max-width: 480px;
+            background: #161b22;
             border: 1px solid #30363d;
-            padding: 10px 15px;
-            border-radius: 12px;
-            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
         }
-        #speed-display {
-            font-size: 28px;
+        .hud {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .hud-box {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 10px 14px;
+        }
+        .hud-label {
+            font-size: 11px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .hud-val {
+            font-size: 24px;
             font-weight: 900;
             color: #58a6ff;
             font-variant-numeric: tabular-nums;
+            margin-top: 2px;
         }
-        #heat-bar-container {
+        .hud-sub {
+            font-size: 12px;
+            color: #8b949e;
+            margin-top: 2px;
+        }
+        .bar-wrap {
             width: 100%;
-            height: 8px;
+            height: 12px;
             background: #21262d;
-            border-radius: 4px;
-            margin-top: 6px;
+            border-radius: 999px;
             overflow: hidden;
+            margin-bottom: 14px;
+            border: 1px solid #30363d;
         }
-        #heat-bar {
+        .bar-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #3fb950, #d29922, #f85149);
+            background: linear-gradient(90deg, #3fb950 0%, #d29922 50%, #f85149 85%, #ff2a2a 100%);
             transition: width 0.05s linear;
         }
-        #overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(13, 17, 23, 0.88);
+        #stage {
+            position: relative;
+            height: 310px;
+            background: radial-gradient(circle at 50% 65%, #1f1715 0%, #0d1117 75%);
+            border: 1px solid #30363d;
+            border-radius: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+        #volcano-btn {
+            font-size: 86px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.06s ease;
+            touch-action: manipulation;
+            z-index: 3;
+            line-height: 1;
+        }
+        #volcano-btn:active {
+            transform: scale(0.88);
+        }
+        #stage-status {
+            margin-top: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #c9d1d9;
+            z-index: 3;
             text-align: center;
-            padding: 30px;
-            pointer-events: auto;
+            padding: 0 12px;
+        }
+        #stage-hint {
+            margin-top: 4px;
+            font-size: 12px;
+            color: #8b949e;
+            z-index: 3;
+        }
+        .vent-hazard {
+            position: absolute;
+            font-size: 26px;
+            cursor: pointer;
+            z-index: 4;
+            background: rgba(13, 17, 23, 0.85);
+            border: 1px solid #58a6ff;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: popIn 0.2s ease-out;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.3); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .float-emoji {
+            position: absolute;
+            font-size: 24px;
+            pointer-events: none;
+            animation: floatUp 0.75s ease-out forwards;
+            z-index: 2;
+        }
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0.85);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(calc(-50% + var(--dx)), calc(-50% - 85px)) scale(1.35);
+            }
+        }
+        .shake-low { animation: shakeLow 0.2s infinite; }
+        .shake-high { animation: shakeHigh 0.12s infinite; }
+        @keyframes shakeLow {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-2px, 2px); }
+        }
+        @keyframes shakeHigh {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-5px, 3px); }
+            50% { transform: translate(5px, -3px); }
+            75% { transform: translate(-4px, -3px); }
+            100% { transform: translate(0, 0); }
+        }
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 17, 23, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
             z-index: 20;
         }
-        #overlay h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
+        #overlay.active {
+            display: flex;
         }
-        #overlay p {
-            color: #8b949e;
-            font-size: 16px;
-            line-height: 1.5;
-            margin-bottom: 25px;
-        }
-        button {
-            background: #238636;
-            color: white;
-            border: none;
-            padding: 15px 35px;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(35, 134, 54, 0.4);
-            transition: transform 0.1s, background 0.2s;
-            touch-action: manipulation;
-        }
-        button:active {
-            transform: scale(0.95);
-        }
-        #controls-hint {
-            position: absolute;
-            bottom: 25px;
+        .modal {
             width: 100%;
+            max-width: 400px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 20px;
+            padding: 24px;
             text-align: center;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 13px;
-            pointer-events: none;
+        }
+        .btn {
+            width: 100%;
+            background: #238636;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 16px;
         }
     </style>
 </head>
 <body>
-
-<div id="game-container">
-    <div id="hud">
-        <div class="stat-box" style="width: 65%;">
-            <div style="font-size: 12px; color: #8b949e;">HIZ LİMİTİ: 1000 KM/H</div>
-            <div id="speed-display">0 <span style="font-size: 14px;">km/h</span></div>
-            <div id="heat-bar-container">
-                <div id="heat-bar"></div>
-            </div>
+<div id="app">
+    <div class="hud">
+        <div class="hud-box">
+            <div class="hud-label">Magma Basıncı</div>
+            <div id="pressure-val" class="hud-val">0.0 bar</div>
+            <div class="hud-sub">Patlama Eşiği: 250.0 bar</div>
         </div>
-        <div class="stat-box" style="text-align: right;">
-            <div style="font-size: 12px; color: #8b949e;">DURUM</div>
-            <div id="status-emoji" style="font-size: 28px;">🏎️</div>
+        <div class="hud-box">
+            <div class="hud-label">Zorluk & Kayıp</div>
+            <div id="difficulty-val" class="hud-val" style="font-size: 18px; color: #3fb950;">Sakin</div>
+            <div id="decay-val" class="hud-sub">-2.0 bar/sn</div>
         </div>
     </div>
 
-    <canvas id="gameCanvas"></canvas>
-
-    <div id="controls-hint">
-        GAZ: Ekrana Basılı Tut / Boşluk • YÖN: Sürükle veya Sağ/Sol Ok
+    <div class="bar-wrap">
+        <div id="pressure-bar" class="bar-fill"></div>
     </div>
 
-    <div id="overlay" style="pointer-events: auto;">
-        <div id="overlay-emoji" style="font-size: 64px; margin-bottom: 10px;">🚀</div>
-        <h1 id="overlay-title">1000 KM/H</h1>
-        <p id="overlay-desc">
-            Ekrana basılı tutarak hızlan! Hızlandıkça trafik sıklaşır ve aracın ısınır.<br><br>
-            ⚠️ <strong>1000 km/h</strong> sınırına ulaşırsan motor aşırı yüklenip <strong>PATLAR!</strong> 💥
-        </p>
-        <button id="start-btn" type="button" onclick="window.startOyunu(event)" onpointerdown="window.startOyunu(event)">GAZA BAS 🔥</button>
+    <div id="stage">
+        <button type="button" id="volcano-btn">🏔️</button>
+        <div id="stage-status">Magma Odası Sakin</div>
+        <div id="stage-hint">Basıncı artırmak için hızlıca dokun veya basılı tut!</div>
+    </div>
+
+    <div style="font-size: 12px; color: #8b949e; text-align: center; line-height: 1.4;">
+        ⚠️ Bıraktığında basınç hızla düşer. Yüksek basınçta beliren ❄️/💧 soğutma çatlaklarına dokunarak kapat!
+    </div>
+</div>
+
+<div id="overlay">
+    <div class="modal">
+        <div style="font-size: 72px; margin-bottom: 10px;">💥</div>
+        <h2 style="font-size: 26px; color: #f85149; margin-bottom: 8px;">250.0 BAR! BÜYÜK PATLAMA!</h2>
+        <p id="final-stats" style="color: #c9d1d9; font-size: 15px; line-height: 1.5;"></p>
+        <button type="button" id="restart-btn" class="btn">YENİDEN PATLAT 🌋</button>
     </div>
 </div>
 
 <script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const speedDisplay = document.getElementById('speed-display');
-    const heatBar = document.getElementById('heat-bar');
-    const statusEmoji = document.getElementById('status-emoji');
+    const MAX_PRESSURE = 250.0; // bar
+    let pressure = 0.0;
+    let isHolding = false;
+    let exploded = false;
+    let startTime = Date.now();
+    let totalTaps = 0;
+    let lastFrame = performance.now();
+    let hazardTimer = 0;
+
+    const pressureVal = document.getElementById('pressure-val');
+    const difficultyVal = document.getElementById('difficulty-val');
+    const decayVal = document.getElementById('decay-val');
+    const pressureBar = document.getElementById('pressure-bar');
+    const stage = document.getElementById('stage');
+    const volcanoBtn = document.getElementById('volcano-btn');
+    const stageStatus = document.getElementById('stage-status');
+    const stageHint = document.getElementById('stage-hint');
     const overlay = document.getElementById('overlay');
-    const overlayTitle = document.getElementById('overlay-title');
-    const overlayDesc = document.getElementById('overlay-desc');
-    const overlayEmoji = document.getElementById('overlay-emoji');
-    const startBtn = document.getElementById('start-btn');
+    const finalStats = document.getElementById('final-stats');
+    const restartBtn = document.getElementById('restart-btn');
 
-    let width = 360;
-    let height = 640;
-
-    function resize() {
-        const parent = canvas.parentElement;
-        width = canvas.width = Math.max(200, parent.clientWidth || window.innerWidth || 360);
-        height = canvas.height = Math.max(300, parent.clientHeight || window.innerHeight || 640);
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    // Oyun Değişkenleri
-    let isPlaying = false;
-    let isAccelerating = false;
-    let speed = 0; // 0 - 1000
-    let playerX = width / 2;
-    let targetX = width / 2;
-    let obstacles = [];
-    let particles = [];
-    let roadOffset = 0;
-    let frameCount = 0;
-    let shakeIntensity = 0;
-    let animFrameId = null;
-    let lastStartTime = 0;
-
-    const obstacleEmojis = ['🚕', '🚙', '🚌', '🚚', '🚧', '🛢️', '🪨'];
-
-    // Kontroller (Dokunmatik & Fare & Klavye)
-    function startGas(e) {
-        if (!isPlaying) return;
-        isAccelerating = true;
-        updatePointer(e);
-    }
-
-    function stopGas() {
-        isAccelerating = false;
-    }
-
-    function updatePointer(e) {
-        if (!isPlaying || !isAccelerating) return;
-        const rect = canvas.getBoundingClientRect();
-        let clientX = (e && e.touches && e.touches[0]) ? e.touches[0].clientX : (e ? e.clientX : undefined);
-        if (clientX !== undefined) {
-            targetX = clientX - rect.left;
-        }
-    }
-
-    canvas.addEventListener('mousedown', startGas);
-    canvas.addEventListener('mousemove', updatePointer);
-    window.addEventListener('mouseup', stopGas);
-
-    canvas.addEventListener('touchstart', (e) => {
-        if (!isPlaying) return;
-        e.preventDefault();
-        startGas(e);
-    }, { passive: false });
-
-    canvas.addEventListener('touchmove', (e) => {
-        if (!isPlaying) return;
-        e.preventDefault();
-        updatePointer(e);
-    }, { passive: false });
-
-    window.addEventListener('touchend', stopGas);
-    window.addEventListener('touchcancel', stopGas);
-
-    // Klavye Desteği
-    const keys = {};
-    window.addEventListener('keydown', (e) => {
-        keys[e.code] = true;
-        if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
-            isAccelerating = true;
-        }
-    });
-    window.addEventListener('keyup', (e) => {
-        keys[e.code] = false;
-        if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
-            isAccelerating = false;
-        }
-    });
-
-    function resetGame(e) {
-        if (e) {
-            e.stopPropagation();
-        }
-        const now = Date.now();
-        if (now - lastStartTime < 250) return;
-        lastStartTime = now;
-
-        resize();
-        speed = 0;
-        playerX = width / 2;
-        targetX = width / 2;
-        obstacles = [];
-        particles = [];
-        shakeIntensity = 0;
-        isAccelerating = false;
-        isPlaying = true;
-        overlay.style.display = 'none';
-        overlay.style.pointerEvents = 'none';
-
-        if (animFrameId) {
-            cancelAnimationFrame(animFrameId);
-        }
-        animFrameId = requestAnimationFrame(gameLoop);
-    }
-
-    window.startOyunu = resetGame;
-    startBtn.addEventListener('click', resetGame);
-    startBtn.addEventListener('touchend', resetGame, { passive: true });
-
-    function createParticles(x, y, emojis, count, speedMult = 1) {
-        for (let i = 0; i < count; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const velocity = (Math.random() * 6 + 2) * speedMult;
-            particles.push({
-                x: x,
-                y: y,
-                vx: Math.cos(angle) * velocity,
-                vy: Math.sin(angle) * velocity,
-                emoji: emojis[Math.floor(Math.random() * emojis.length)],
-                size: Math.random() * 20 + 16,
-                life: 1.0
-            });
-        }
-    }
-
-    function endGame(reason) {
-        isPlaying = false;
-        isAccelerating = false;
-
-        if (reason === 'exploded') {
-            createParticles(playerX, height - 110, ['💥', '🔥', '💨', '⚡', '🔩'], 35, 1.8);
-            shakeIntensity = 25;
-            overlayEmoji.textContent = '💥';
-            overlayTitle.textContent = '1000 KM/H! PATLADIN!';
-            overlayTitle.style.color = '#f85149';
-            overlayDesc.innerHTML = 'Motor aşırı hıza dayanamadı ve infilak etti!<br>Maksimum sınıra ulaştın, efsanevi bir son!';
+    function getStageConfig(p) {
+        if (p < 50) {
+            return {
+                emoji: '🏔️',
+                label: 'Sakin',
+                color: '#3fb950',
+                status: 'Yeraltı Isınıyor',
+                particles: ['💨', '🪨', '🌫️'],
+                gainMult: 1.0,
+                baseDecay: 3.5,
+                hazardInterval: 999
+            };
+        } else if (p < 110) {
+            return {
+                emoji: '🌋',
+                label: 'Aktif',
+                color: '#58a6ff',
+                status: 'Duman & Kül Çıkışı',
+                particles: ['💨', '♨️', '🪨'],
+                gainMult: 0.85,
+                baseDecay: 7.5,
+                hazardInterval: 3.6
+            };
+        } else if (p < 175) {
+            return {
+                emoji: '🌋',
+                label: 'Tehlikeli',
+                color: '#d29922',
+                status: 'Magma Yükseliyor!',
+                particles: ['🔥', '♨️', '🪨', '💨'],
+                gainMult: 0.68,
+                baseDecay: 13.0,
+                hazardInterval: 2.5
+            };
+        } else if (p < 220) {
+            return {
+                emoji: '🔥',
+                label: 'Kritik',
+                color: '#f85149',
+                status: 'Krater Çatlıyor!',
+                particles: ['🔥', '🌋', '⚡', '🪨'],
+                gainMult: 0.54,
+                baseDecay: 19.5,
+                hazardInterval: 1.8
+            };
         } else {
-            createParticles(playerX, height - 110, ['💥', '💢', '💨'], 15, 1);
-            shakeIntensity = 12;
-            overlayEmoji.textContent = '🚑';
-            overlayTitle.textContent = 'KAZA YAPTIN!';
-            overlayTitle.style.color = '#d29922';
-            overlayDesc.innerHTML = `Ulaşılan Maksimum Hız: <strong>${Math.floor(speed)} km/h</strong><br>Hızlandıkça reflekslerin daha da keskin olmalı!`;
+            return {
+                emoji: '🧨',
+                label: 'Aşırı Yük!',
+                color: '#ff2a2a',
+                status: 'PATLAMAYA RAMAK KALDI!',
+                particles: ['💥', '🔥', '⚡', '🌋'],
+                gainMult: 0.44,
+                baseDecay: 26.0,
+                hazardInterval: 1.3
+            };
         }
+    }
+
+    function spawnFloat(emoji, x, y, dx = (Math.random() - 0.5) * 110) {
+        const el = document.createElement('span');
+        el.className = 'float-emoji';
+        el.textContent = emoji;
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+        el.style.setProperty('--dx', `${dx}px`);
+        stage.appendChild(el);
+        setTimeout(() => el.remove(), 750);
+    }
+
+    function spawnCoolingHazard() {
+        if (stage.querySelectorAll('.vent-hazard').length >= 3) return;
+        const hz = document.createElement('button');
+        hz.type = 'button';
+        hz.className = 'vent-hazard';
+        hz.textContent = Math.random() > 0.5 ? '❄️' : '💧';
+
+        const rect = stage.getBoundingClientRect();
+        const x = 28 + Math.random() * Math.max(60, rect.width - 56);
+        const y = 28 + Math.random() * Math.max(60, rect.height - 90);
+        hz.style.left = `${x}px`;
+        hz.style.top = `${y}px`;
+
+        const closeHazard = (e) => {
+            e.stopPropagation();
+            spawnFloat('💨', x + 20, y + 20, 0);
+            hz.remove();
+        };
+        hz.addEventListener('click', closeHazard);
+        hz.addEventListener('touchstart', (e) => { e.preventDefault(); closeHazard(e); }, { passive: false });
+
+        stage.appendChild(hz);
+        setTimeout(() => {
+            if (hz.parentNode) hz.remove();
+        }, 4000);
+    }
+
+    function boostPressure(amount, clientX, clientY) {
+        if (exploded) return;
+        const cfg = getStageConfig(pressure);
+        pressure = Math.min(MAX_PRESSURE, pressure + amount * cfg.gainMult);
+
+        const rect = stage.getBoundingClientRect();
+        const fx = clientX ? clientX - rect.left : rect.width / 2;
+        const fy = clientY ? clientY - rect.top : rect.height / 2;
+        const pEmoji = cfg.particles[Math.floor(Math.random() * cfg.particles.length)];
+        spawnFloat(pEmoji, fx, fy);
+
+        if (pressure >= MAX_PRESSURE) {
+            triggerExplosion();
+        }
+    }
+
+    function triggerExplosion() {
+        exploded = true;
+        isHolding = false;
+        stage.classList.remove('shake-low', 'shake-high');
+        stage.querySelectorAll('.vent-hazard').forEach(el => el.remove());
+
+        const rect = stage.getBoundingClientRect();
+        const boomEmojis = ['💥', '🔥', '🌋', '🪨', '⚡', '💨'];
+        for (let i = 0; i < 26; i++) {
+            const em = boomEmojis[i % boomEmojis.length];
+            const bx = rect.width / 2 + (Math.random() - 0.5) * 100;
+            const by = rect.height / 2 + (Math.random() - 0.5) * 80;
+            const dx = (Math.random() - 0.5) * 260;
+            spawnFloat(em, bx, by, dx);
+        }
+
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        finalStats.innerHTML = `Yanardağ <strong>250.0 bar</strong> basınca dayanamadı ve infilak etti!<br><br>⏱️ Süre: <strong>${elapsed} sn</strong> • 👆 Dokunuş: <strong>${totalTaps}</strong>`;
 
         setTimeout(() => {
-            startBtn.textContent = 'TEKRAR DENE 🔄';
-            overlay.style.pointerEvents = 'auto';
-            overlay.style.display = 'flex';
-        }, 600);
+            overlay.classList.add('active');
+        }, 550);
     }
 
-    function update() {
-        frameCount++;
+    volcanoBtn.addEventListener('pointerdown', (e) => {
+        if (exploded) return;
+        isHolding = true;
+        totalTaps += 1;
+        boostPressure(4.2, e.clientX, e.clientY);
+    });
 
-        const moveSpeed = 7 + (speed / 150);
-        if (keys['ArrowLeft'] || keys['KeyA']) targetX -= moveSpeed;
-        if (keys['ArrowRight'] || keys['KeyD']) targetX += moveSpeed;
+    window.addEventListener('pointerup', () => { isHolding = false; });
+    window.addEventListener('pointercancel', () => { isHolding = false; });
 
-        targetX = Math.max(35, Math.min(width - 35, targetX));
-        playerX += (targetX - playerX) * 0.2;
+    function loop(now) {
+        const dt = Math.min(0.1, (now - lastFrame) / 1000);
+        lastFrame = now;
 
-        // Yavaş Hızlanma ve Dengeli Yavaşlama
-        if (isAccelerating) {
-            speed += 0.75 + (speed * 0.0012);
-        } else {
-            speed = Math.max(0, speed - 1.5);
-        }
+        if (!exploded) {
+            const cfg = getStageConfig(pressure);
+            const activeHazards = stage.querySelectorAll('.vent-hazard').length;
 
-        if (speed >= 1000) {
-            speed = 1000;
-            updateHUD();
-            endGame('exploded');
-            return;
-        }
-
-        if (speed > 600) {
-            shakeIntensity = ((speed - 600) / 400) * 8;
-        } else {
-            shakeIntensity = Math.max(0, shakeIntensity - 0.5);
-        }
-
-        if (isAccelerating && frameCount % 3 === 0) {
-            const exhaustEmoji = speed > 800 ? '🔥' : (speed > 400 ? '⚡' : '💨');
-            particles.push({
-                x: playerX + (Math.random() * 14 - 7),
-                y: height - 85,
-                vx: (Math.random() - 0.5) * 1.5,
-                vy: Math.random() * 4 + 3,
-                emoji: exhaustEmoji,
-                size: speed > 700 ? 22 : 16,
-                life: 0.7
-            });
-        }
-
-        const spawnRate = Math.max(12, Math.floor(55 - (speed / 22)));
-        if (speed > 30 && frameCount % spawnRate === 0) {
-            const laneWidth = Math.max(40, width - 80);
-            const obsX = 40 + Math.random() * laneWidth;
-            const emoji = obstacleEmojis[Math.floor(Math.random() * obstacleEmojis.length)];
-            obstacles.push({
-                x: obsX,
-                y: -50,
-                emoji: emoji,
-                size: 36,
-                speedOffset: Math.random() * 2 + 1
-            });
-        }
-
-        const fallSpeed = 3 + (speed / 35);
-        for (let i = obstacles.length - 1; i >= 0; i--) {
-            let obs = obstacles[i];
-            obs.y += fallSpeed + obs.speedOffset;
-
-            const dx = Math.abs(playerX - obs.x);
-            const dy = Math.abs((height - 110) - obs.y);
-            if (dx < 26 && dy < 28) {
-                endGame('crashed');
-                return;
+            // Basılı tutarken sürekli basınç artışı, bırakıldığında hızlı basınç kaybı
+            if (isHolding) {
+                pressure += (15.0 * cfg.gainMult) * dt;
+                if (Math.random() < 0.25) {
+                    const rect = stage.getBoundingClientRect();
+                    const em = cfg.particles[Math.floor(Math.random() * cfg.particles.length)];
+                    spawnFloat(em, rect.width / 2, rect.height / 2 - 10);
+                }
+            } else {
+                const totalDecay = cfg.baseDecay + activeHazards * 6.5;
+                pressure = Math.max(0, pressure - totalDecay * dt);
             }
 
-            if (obs.y > height + 60) {
-                obstacles.splice(i, 1);
+            // Aktif soğutma çatlakları basılı tutarken bile basıncı emer
+            if (activeHazards > 0) {
+                pressure = Math.max(0, pressure - (activeHazards * 5.5) * dt);
+            }
+
+            if (pressure >= MAX_PRESSURE) {
+                pressure = MAX_PRESSURE;
+                triggerExplosion();
+            }
+
+            // Zorluk arttıkça soğutma çatlakları çıkar
+            if (cfg.hazardInterval < 100) {
+                hazardTimer += dt;
+                if (hazardTimer >= cfg.hazardInterval) {
+                    hazardTimer = 0;
+                    spawnCoolingHazard();
+                }
+            }
+
+            // Arayüz & Emoji Güncelleme
+            const ratio = pressure / MAX_PRESSURE;
+            pressureVal.textContent = `${pressure.toFixed(1)} bar`;
+            pressureVal.style.color = cfg.color;
+            difficultyVal.textContent = cfg.label;
+            difficultyVal.style.color = cfg.color;
+            decayVal.textContent = `-${(cfg.baseDecay + activeHazards * 6.5).toFixed(1)} bar/sn`;
+            pressureBar.style.width = `${ratio * 100}%`;
+
+            volcanoBtn.textContent = cfg.emoji;
+            volcanoBtn.style.transform = `scale(${(1 + ratio * 0.42).toFixed(2)})`;
+            stageStatus.textContent = cfg.status;
+            stageHint.textContent = isHolding
+                ? 'Basınç yükseliyor! Bırakırsan düşer!'
+                : 'Bıraktın! Basınç hızla düşüyor...';
+
+            stage.classList.remove('shake-low', 'shake-high');
+            if (pressure >= 185) {
+                stage.classList.add('shake-high');
+            } else if (pressure >= 110) {
+                stage.classList.add('shake-low');
             }
         }
 
-        roadOffset = (roadOffset + fallSpeed * 1.5) % 80;
-
-        updateHUD();
+        requestAnimationFrame(loop);
     }
 
-    function updateHUD() {
-        const currentSpeed = Math.floor(speed);
-        speedDisplay.innerHTML = `${currentSpeed} <span style="font-size: 14px;">km/h</span>`;
-        heatBar.style.width = `${(speed / 1000) * 100}%`;
+    restartBtn.addEventListener('click', () => {
+        pressure = 0.0;
+        isHolding = false;
+        exploded = false;
+        totalTaps = 0;
+        hazardTimer = 0;
+        startTime = Date.now();
+        stage.querySelectorAll('.vent-hazard').forEach(el => el.remove());
+        overlay.classList.remove('active');
+    });
 
-        if (speed < 250) {
-            speedDisplay.style.color = '#58a6ff';
-            statusEmoji.textContent = '🏎️';
-        } else if (speed < 550) {
-            speedDisplay.style.color = '#3fb950';
-            statusEmoji.textContent = '⚡';
-        } else if (speed < 850) {
-            speedDisplay.style.color = '#d29922';
-            statusEmoji.textContent = '🔥';
-        } else {
-            speedDisplay.style.color = '#f85149';
-            statusEmoji.textContent = '🥵';
-        }
-    }
-
-    function draw() {
-        ctx.save();
-
-        if (shakeIntensity > 0) {
-            const dx = (Math.random() - 0.5) * shakeIntensity;
-            const dy = (Math.random() - 0.5) * shakeIntensity;
-            ctx.translate(dx, dy);
-        }
-
-        ctx.clearRect(0, 0, width, height);
-
-        if (speed > 650) {
-            const redAlpha = ((speed - 650) / 350) * 0.25;
-            ctx.fillStyle = `rgba(248, 81, 73, ${redAlpha})`;
-            ctx.fillRect(0, 0, width, height);
-        }
-
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
-        ctx.lineWidth = 4;
-        ctx.setLineDash([40, 40]);
-        ctx.lineDashOffset = -roadOffset;
-
-        const lanes = 3;
-        for (let i = 1; i < lanes; i++) {
-            const x = (width / lanes) * i;
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, height);
-            ctx.stroke();
-        }
-        ctx.setLineDash([]);
-
-        if (speed > 400) {
-            ctx.strokeStyle = `rgba(255, 255, 255, ${(speed - 400) / 1500})`;
-            ctx.lineWidth = 2;
-            for (let i = 0; i < 6; i++) {
-                const lx = ((frameCount * 37 + i * 97) % width);
-                const ly = ((frameCount * (speed / 25) + i * 150) % height);
-                ctx.beginPath();
-                ctx.moveTo(lx, ly);
-                ctx.lineTo(lx, ly + 40 + (speed / 15));
-                ctx.stroke();
-            }
-        }
-
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        for (let obs of obstacles) {
-            ctx.font = `${obs.size}px Arial`;
-            ctx.fillText(obs.emoji, obs.x, obs.y);
-        }
-
-        if (isPlaying) {
-            ctx.font = '44px Arial';
-            const carJitter = speed > 800 ? (Math.random() - 0.5) * 4 : 0;
-            ctx.fillText('🏎️', playerX + carJitter, height - 110);
-        }
-
-        for (let i = particles.length - 1; i >= 0; i--) {
-            let p = particles[i];
-            p.x += p.vx;
-            p.y += p.vy;
-            p.life -= 0.03;
-
-            if (p.life <= 0) {
-                particles.splice(i, 1);
-                continue;
-            }
-
-            ctx.globalAlpha = Math.max(0, p.life);
-            ctx.font = `${p.size}px Arial`;
-            ctx.fillText(p.emoji, p.x, p.y);
-        }
-        ctx.globalAlpha = 1.0;
-
-        ctx.restore();
-    }
-
-    function gameLoop() {
-        if (isPlaying) {
-            update();
-        }
-        draw();
-        if (isPlaying || particles.length > 0) {
-            animFrameId = requestAnimationFrame(gameLoop);
-        }
-    }
+    requestAnimationFrame(loop);
 </script>
-
 </body>
 </html>
