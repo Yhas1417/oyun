@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yanardağ Basınç Patlaması</title>
+    <title>Yanardağ 1000 Bar Patlaması</title>
     <style>
         * {
             box-sizing: border-box;
@@ -35,7 +35,7 @@
         }
         .hud {
             display: grid;
-            grid-template-columns: 1.3fr 1fr;
+            grid-template-columns: 1.35fr 1fr;
             gap: 10px;
             margin-bottom: 12px;
         }
@@ -52,7 +52,7 @@
             letter-spacing: 0.4px;
         }
         .hud-val {
-            font-size: 24px;
+            font-size: 23px;
             font-weight: 900;
             color: #58a6ff;
             font-variant-numeric: tabular-nums;
@@ -75,13 +75,13 @@
         .bar-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #3fb950 0%, #d29922 50%, #f85149 85%, #ff2a2a 100%);
+            background: linear-gradient(90deg, #3fb950 0%, #d29922 45%, #f85149 80%, #ff1e1e 100%);
             transition: width 0.05s linear;
         }
         #stage {
             position: relative;
-            height: 310px;
-            background: radial-gradient(circle at 50% 65%, #1f1715 0%, #0d1117 75%);
+            height: 315px;
+            background: radial-gradient(circle at 50% 65%, #231715 0%, #0d1117 75%);
             border: 1px solid #30363d;
             border-radius: 16px;
             display: flex;
@@ -96,14 +96,14 @@
             background: transparent;
             border: none;
             cursor: pointer;
-            transition: transform 0.06s ease;
+            transition: transform 0.05s ease;
             touch-action: manipulation;
             z-index: 3;
             line-height: 1;
         }
         #volcano-btn:active,
         #volcano-btn.pressed {
-            transform: scale(0.88);
+            transform: scale(0.86);
         }
         #stage-status {
             margin-top: 12px;
@@ -122,18 +122,18 @@
         }
         .vent-hazard {
             position: absolute;
-            font-size: 26px;
+            font-size: 24px;
             cursor: pointer;
             z-index: 4;
-            background: rgba(13, 17, 23, 0.85);
-            border: 1px solid #58a6ff;
+            background: rgba(13, 17, 23, 0.9);
+            border: 1.5px solid #58a6ff;
             border-radius: 50%;
-            width: 44px;
-            height: 44px;
+            width: 42px;
+            height: 42px;
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: popIn 0.2s ease-out;
+            animation: popIn 0.18s ease-out;
         }
         @keyframes popIn {
             from { transform: scale(0.3); opacity: 0; }
@@ -156,23 +156,23 @@
                 transform: translate(calc(-50% + var(--dx)), calc(-50% - 85px)) scale(1.35);
             }
         }
-        .shake-low { animation: shakeLow 0.2s infinite; }
-        .shake-high { animation: shakeHigh 0.12s infinite; }
+        .shake-low { animation: shakeLow 0.18s infinite; }
+        .shake-high { animation: shakeHigh 0.1s infinite; }
         @keyframes shakeLow {
             0%, 100% { transform: translate(0, 0); }
             50% { transform: translate(-2px, 2px); }
         }
         @keyframes shakeHigh {
             0% { transform: translate(0, 0); }
-            25% { transform: translate(-5px, 3px); }
-            50% { transform: translate(5px, -3px); }
+            25% { transform: translate(-6px, 3px); }
+            50% { transform: translate(6px, -3px); }
             75% { transform: translate(-4px, -3px); }
             100% { transform: translate(0, 0); }
         }
         #overlay {
             position: fixed;
             inset: 0;
-            background: rgba(13, 17, 23, 0.9);
+            background: rgba(13, 17, 23, 0.92);
             display: none;
             align-items: center;
             justify-content: center;
@@ -211,12 +211,12 @@
         <div class="hud-box">
             <div class="hud-label">Magma Basıncı</div>
             <div id="pressure-val" class="hud-val">0.0 bar</div>
-            <div class="hud-sub">Patlama Eşiği: 250.0 bar</div>
+            <div class="hud-sub">Patlama Eşiği: 1000.0 bar</div>
         </div>
         <div class="hud-box">
             <div class="hud-label">Zorluk & Kayıp</div>
             <div id="difficulty-val" class="hud-val" style="font-size: 18px; color: #3fb950;">Sakin</div>
-            <div id="decay-val" class="hud-sub">-3.5 bar/sn</div>
+            <div id="decay-val" class="hud-sub">-8.0 bar/sn</div>
         </div>
     </div>
 
@@ -227,25 +227,25 @@
     <div id="stage">
         <button type="button" id="volcano-btn">🏔️</button>
         <div id="stage-status">Magma Odası Sakin</div>
-        <div id="stage-hint">Dokun veya SPACE tuşuna bas!</div>
+        <div id="stage-hint">Seri dokun veya SPACE pompalayarak basıncı yükselt!</div>
     </div>
 
     <div style="font-size: 12px; color: #8b949e; text-align: center; line-height: 1.4;">
-        ⚠️ Dokunarak ya da <strong>SPACE</strong> tuşuyla basıncı artır. Yüksek basınçta beliren ❄️/💧 soğutma çatlaklarına dokunarak kapat!
+        ⚠️ Yüksek basınçta kaçak çok şiddetlenir. Beliren ❄️/💧 soğutma çatlaklarını hızla kapat!
     </div>
 </div>
 
 <div id="overlay">
     <div class="modal">
         <div style="font-size: 72px; margin-bottom: 10px;">💥</div>
-        <h2 style="font-size: 26px; color: #f85149; margin-bottom: 8px;">250.0 BAR! BÜYÜK PATLAMA!</h2>
+        <h2 style="font-size: 25px; color: #f85149; margin-bottom: 8px;">1000.0 BAR! SÜPER PATLAMA!</h2>
         <p id="final-stats" style="color: #c9d1d9; font-size: 15px; line-height: 1.5;"></p>
         <button type="button" id="restart-btn" class="btn">YENİDEN PATLAT (SPACE) 🌋</button>
     </div>
 </div>
 
 <script>
-    const MAX_PRESSURE = 250.0; // bar
+    const MAX_PRESSURE = 1000.0; // bar
     let pressure = 0.0;
     let isPointerHolding = false;
     let isSpaceHolding = false;
@@ -272,270 +272,35 @@
     }
 
     function getStageConfig(p) {
-        if (p < 50) {
+        if (p < 200) {
             return {
                 emoji: '🏔️',
                 label: 'Sakin',
                 color: '#3fb950',
                 status: 'Yeraltı Isınıyor',
                 particles: ['💨', '🪨', '🌫️'],
-                gainMult: 1.0,
-                baseDecay: 3.5,
+                tapGain: 14.0,
+                holdGain: 22.0,
+                baseDecay: 8.0,
                 hazardInterval: 999
             };
-        } else if (p < 110) {
+        } else if (p < 450) {
             return {
                 emoji: '🌋',
                 label: 'Aktif',
                 color: '#58a6ff',
                 status: 'Duman & Kül Çıkışı',
                 particles: ['💨', '♨️', '🪨'],
-                gainMult: 0.85,
-                baseDecay: 7.5,
-                hazardInterval: 3.6
+                tapGain: 12.0,
+                holdGain: 26.0,
+                baseDecay: 22.0,
+                hazardInterval: 2.6
             };
-        } else if (p < 175) {
+        } else if (p < 700) {
             return {
                 emoji: '🌋',
                 label: 'Tehlikeli',
                 color: '#d29922',
                 status: 'Magma Yükseliyor!',
                 particles: ['🔥', '♨️', '🪨', '💨'],
-                gainMult: 0.68,
-                baseDecay: 13.0,
-                hazardInterval: 2.5
-            };
-        } else if (p < 220) {
-            return {
-                emoji: '🔥',
-                label: 'Kritik',
-                color: '#f85149',
-                status: 'Krater Çatlıyor!',
-                particles: ['🔥', '🌋', '⚡', '🪨'],
-                gainMult: 0.54,
-                baseDecay: 19.5,
-                hazardInterval: 1.8
-            };
-        } else {
-            return {
-                emoji: '🧨',
-                label: 'Aşırı Yük!',
-                color: '#ff2a2a',
-                status: 'PATLAMAYA RAMAK KALDI!',
-                particles: ['💥', '🔥', '⚡', '🌋'],
-                gainMult: 0.44,
-                baseDecay: 26.0,
-                hazardInterval: 1.3
-            };
-        }
-    }
-
-    function spawnFloat(emoji, x, y, dx = (Math.random() - 0.5) * 110) {
-        const el = document.createElement('span');
-        el.className = 'float-emoji';
-        el.textContent = emoji;
-        el.style.left = `${x}px`;
-        el.style.top = `${y}px`;
-        el.style.setProperty('--dx', `${dx}px`);
-        stage.appendChild(el);
-        setTimeout(() => el.remove(), 750);
-    }
-
-    function spawnCoolingHazard() {
-        if (stage.querySelectorAll('.vent-hazard').length >= 3) return;
-        const hz = document.createElement('button');
-        hz.type = 'button';
-        hz.className = 'vent-hazard';
-        hz.textContent = Math.random() > 0.5 ? '❄️' : '💧';
-
-        const rect = stage.getBoundingClientRect();
-        const x = 28 + Math.random() * Math.max(60, rect.width - 56);
-        const y = 28 + Math.random() * Math.max(60, rect.height - 90);
-        hz.style.left = `${x}px`;
-        hz.style.top = `${y}px`;
-
-        const closeHazard = (e) => {
-            e.stopPropagation();
-            spawnFloat('💨', x + 20, y + 20, 0);
-            hz.remove();
-        };
-        hz.addEventListener('click', closeHazard);
-        hz.addEventListener('touchstart', (e) => { e.preventDefault(); closeHazard(e); }, { passive: false });
-
-        stage.appendChild(hz);
-        setTimeout(() => {
-            if (hz.parentNode) hz.remove();
-        }, 4000);
-    }
-
-    function boostPressure(amount, clientX, clientY) {
-        if (exploded) return;
-        const cfg = getStageConfig(pressure);
-        pressure = Math.min(MAX_PRESSURE, pressure + amount * cfg.gainMult);
-
-        const rect = stage.getBoundingClientRect();
-        const fx = clientX ? clientX - rect.left : rect.width / 2;
-        const fy = clientY ? clientY - rect.top : rect.height / 2;
-        const pEmoji = cfg.particles[Math.floor(Math.random() * cfg.particles.length)];
-        spawnFloat(pEmoji, fx, fy);
-
-        if (pressure >= MAX_PRESSURE) {
-            triggerExplosion();
-        }
-    }
-
-    function triggerExplosion() {
-        exploded = true;
-        isPointerHolding = false;
-        isSpaceHolding = false;
-        volcanoBtn.classList.remove('pressed');
-        stage.classList.remove('shake-low', 'shake-high');
-        stage.querySelectorAll('.vent-hazard').forEach(el => el.remove());
-
-        const rect = stage.getBoundingClientRect();
-        const boomEmojis = ['💥', '🔥', '🌋', '🪨', '⚡', '💨'];
-        for (let i = 0; i < 26; i++) {
-            const em = boomEmojis[i % boomEmojis.length];
-            const bx = rect.width / 2 + (Math.random() - 0.5) * 100;
-            const by = rect.height / 2 + (Math.random() - 0.5) * 80;
-            const dx = (Math.random() - 0.5) * 260;
-            spawnFloat(em, bx, by, dx);
-        }
-
-        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-        finalStats.innerHTML = `Yanardağ <strong>250.0 bar</strong> basınca dayanamadı ve infilak etti!<br><br>⏱️ Süre: <strong>${elapsed} sn</strong> • 👆 Vuruş: <strong>${totalTaps}</strong>`;
-
-        setTimeout(() => {
-            overlay.classList.add('active');
-        }, 550);
-    }
-
-    function resetGame() {
-        pressure = 0.0;
-        isPointerHolding = false;
-        isSpaceHolding = false;
-        exploded = false;
-        totalTaps = 0;
-        hazardTimer = 0;
-        startTime = Date.now();
-        volcanoBtn.classList.remove('pressed');
-        stage.querySelectorAll('.vent-hazard').forEach(el => el.remove());
-        overlay.classList.remove('active');
-    }
-
-    // Fare / Dokunmatik Kontrolleri
-    volcanoBtn.addEventListener('pointerdown', (e) => {
-        if (exploded) return;
-        isPointerHolding = true;
-        volcanoBtn.classList.add('pressed');
-        totalTaps += 1;
-        boostPressure(4.2, e.clientX, e.clientY);
-    });
-
-    window.addEventListener('pointerup', () => {
-        isPointerHolding = false;
-        if (!isSpaceHolding) volcanoBtn.classList.remove('pressed');
-    });
-    window.addEventListener('pointercancel', () => {
-        isPointerHolding = false;
-        if (!isSpaceHolding) volcanoBtn.classList.remove('pressed');
-    });
-
-    // Space (Boşluk) Tuşu Desteği
-    window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space') {
-            e.preventDefault();
-            if (exploded) {
-                if (overlay.classList.contains('active') && !e.repeat) {
-                    resetGame();
-                }
-                return;
-            }
-            if (!e.repeat) {
-                isSpaceHolding = true;
-                volcanoBtn.classList.add('pressed');
-                totalTaps += 1;
-                boostPressure(4.2);
-            }
-        }
-    });
-
-    window.addEventListener('keyup', (e) => {
-        if (e.code === 'Space') {
-            e.preventDefault();
-            isSpaceHolding = false;
-            if (!isPointerHolding) volcanoBtn.classList.remove('pressed');
-        }
-    });
-
-    function loop(now) {
-        const dt = Math.min(0.1, (now - lastFrame) / 1000);
-        lastFrame = now;
-
-        if (!exploded) {
-            const cfg = getStageConfig(pressure);
-            const activeHazards = stage.querySelectorAll('.vent-hazard').length;
-            const holding = isHolding();
-
-            if (holding) {
-                pressure += (15.0 * cfg.gainMult) * dt;
-                if (Math.random() < 0.25) {
-                    const rect = stage.getBoundingClientRect();
-                    const em = cfg.particles[Math.floor(Math.random() * cfg.particles.length)];
-                    spawnFloat(em, rect.width / 2, rect.height / 2 - 10);
-                }
-            } else {
-                const totalDecay = cfg.baseDecay + activeHazards * 6.5;
-                pressure = Math.max(0, pressure - totalDecay * dt);
-            }
-
-            if (activeHazards > 0) {
-                pressure = Math.max(0, pressure - (activeHazards * 5.5) * dt);
-            }
-
-            if (pressure >= MAX_PRESSURE) {
-                pressure = MAX_PRESSURE;
-                triggerExplosion();
-            }
-
-            if (cfg.hazardInterval < 100) {
-                hazardTimer += dt;
-                if (hazardTimer >= cfg.hazardInterval) {
-                    hazardTimer = 0;
-                    spawnCoolingHazard();
-                }
-            }
-
-            const ratio = pressure / MAX_PRESSURE;
-            pressureVal.textContent = `${pressure.toFixed(1)} bar`;
-            pressureVal.style.color = cfg.color;
-            difficultyVal.textContent = cfg.label;
-            difficultyVal.style.color = cfg.color;
-            decayVal.textContent = `-${(cfg.baseDecay + activeHazards * 6.5).toFixed(1)} bar/sn`;
-            pressureBar.style.width = `${ratio * 100}%`;
-
-            volcanoBtn.textContent = cfg.emoji;
-            const pressScale = holding ? 0.92 : 1.0;
-            volcanoBtn.style.transform = `scale(${((1 + ratio * 0.42) * pressScale).toFixed(2)})`;
-            stageStatus.textContent = cfg.status;
-            stageHint.textContent = holding
-                ? 'Basınç yükseliyor! Bırakırsan düşer!'
-                : 'Dokun veya SPACE ile basıncı artır!';
-
-            stage.classList.remove('shake-low', 'shake-high');
-            if (pressure >= 185) {
-                stage.classList.add('shake-high');
-            } else if (pressure >= 110) {
-                stage.classList.add('shake-low');
-            }
-        }
-
-        requestAnimationFrame(loop);
-    }
-
-    restartBtn.addEventListener('click', resetGame);
-
-    requestAnimationFrame(loop);
-</script>
-</body>
-</html>
+                tapGain: 10.2,
